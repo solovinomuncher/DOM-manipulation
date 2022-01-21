@@ -407,3 +407,170 @@ const myObj1 = {
 };
 
 Object.keys(myObj1); // returns ['name', 'age', 'employedAs']
+
+// ====================================================
+// using fetch API: promises
+// ====================================================
+
+// replaces callbacks, better bc no need to endlessly indent,
+// just add a then and stay in the same indent
+
+// promise is committing to something
+// either promise is completed (resolved)
+// or promise is failed (rejected)
+
+// great for when you need to do something that's going to take a long time 
+// in the background (eg downloading image from server)
+
+// promise object takes a function with two variables, resolve and reject
+
+let myPromise = new Promise((resolve, reject) => {
+    let a = 1 + 2;
+    if (a == 2) {
+        resolve('Success');
+    } else {
+        reject('Failed');
+    }
+});
+
+// to interact with promises
+// then only runs if Promise resolved
+// catch only runs if Promise rejected
+myPromise.then((message) => {
+    console.log('This is in the then ' + message);
+}).catch((message) => {
+    console.log('This is in the catch ' + message);
+})
+
+// if you need multiple promises (that resolve at different times) for a new Promise 
+// that needs them all at the same time, use Promise.all
+
+// resolves in 20ms
+const recordVideoOne = new Promise((resolve,reject) => {
+    resolve('Video 1 Recorded');
+})
+// resolves in 40ms
+const recordVideoTwo = new Promise((resolve,reject) => {
+    resolve('Video 2 Recorded');
+})
+// resolves in 100ms
+const recordVideoThree = new Promise((resolve,reject) => {
+    resolve('Video 3 Recorded');
+})
+
+// resolves at the same time, returns all messages
+Promise.all([
+    recordVideoOne,
+    recordVideoTwo,
+    recordVideoThree
+]).then((messages) => {
+    console.log(messages);
+})
+
+// if you want to wait until at least one (out of many) resolves, use Promise.race
+
+// resolves at the same time, returns first message of Promise that resolves
+Promise.race([
+    recordVideoOne,
+    recordVideoTwo,
+    recordVideoThree
+]).then((messages) => {
+    console.log(messages);
+})
+
+// ====================================================
+// using fetch API: async and await
+// ====================================================
+
+// both async and await are syntactic sugar that make Promises easier to work with
+// async tells JS that once it hits an await, it can do other things until it finishes
+// await tells JS to wait until makeRequest finishes, THEN execute next thing
+// try...catch statement specifies a response (the catch) should an exception be thrown by
+// any statement within the try
+
+// MAKING PROMISES:
+function makeRequest(location) {
+    return new Promise((resolve, reject) => {
+        console.log(`Making Request to ${location}`)
+        if (location === 'Google') {
+            resolve('Google says hi')
+        } else {
+            reject('We can only talk to Google')
+        }
+    })
+}
+
+function processRequest(response) {
+    return new Promise((resolve, reject) => {
+        console.log('Processing response')
+        resolve(`Extra information + ${response}`)
+    })
+}
+
+// HOW TO CALL THESE FUNCTIONS USING PROMISES & THEN:
+// makeRequest('Google').then(response => {
+//     console.log('Response Received')
+//     return processRequest(response)
+// }).then(processedResponse => {
+//     console.log(processedResponse)
+// }).catch(err => {
+//     console.log(err)
+// })
+
+// HOW TO CALL THESE FUNCTIONS WITH ASYNC AND AWAIT:
+// async function doWork() { 
+//     const response = await makeRequest('Google') 
+//     console.log('Response Received')
+//     const processedResponse = await processRequest(response)
+//     console.log(processedResponse)
+// }
+// doWork()
+
+// HOW TO ADD A CATCH TO THE ASYNC AND AWAIT FUNCTION:
+async function doWork() { 
+    try {
+        const response = await makeRequest('Google') 
+        console.log('Response Received')
+        const processedResponse = await processRequest(response)
+        console.log(processedResponse)
+    } catch(err) {
+        console.log(err)
+    }
+}
+doWork()
+
+// ====================================================
+// using fetch API: fetch
+// ====================================================
+// first property is URL
+
+// fetch(<url>) returns Promise {<pending>}
+// res returns Response {... body, ok, status, statusText... }
+// the Response object contains the body of data we requested, but it's not directly accessible
+// res.json() returns another Promise {<pending>}
+// data returns data from API
+// if get request fails, fetch shouldn't run
+
+// USING FETCH TO GET DATA FROM SERVER:
+fetch('https://reqres.in/api/users')
+    .then(res => {
+        if (res.ok) {
+            console.log('SUCCESS')
+        } else {
+            console.log('NOT SUCCESSFUL')
+        }
+}).then(data => console.log(data));
+
+// USING FETCH TO POST DATA TO SERVER (USING JSON):
+fetch('https://reqres.in/api/users', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        name: 'User1'
+    })
+})
+    .then(res => {
+        return res.json() // can be parsed to other formats if needed
+}).then(data => console.log(data));
