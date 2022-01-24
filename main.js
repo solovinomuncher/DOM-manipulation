@@ -574,3 +574,55 @@ fetch('https://reqres.in/api/users', {
     .then(res => {
         return res.json() // can be parsed to other formats if needed
 }).then(data => console.log(data));
+
+// ====================================================
+// basics of regex
+// ====================================================
+
+// used to validate user-generated input and search through text
+// regexr.com is a great site to learn regex
+
+const regex1a = /foo/; // literal way
+const regex1b = new RegExp(/foo/); // instantiate RegExp
+
+const matches1 = 'Some Text'.match(regex1a); // find all matching patterns
+const index1 = 'Some Text'.search(regex1a); // search for a single match
+const next = 'Some Text'.replace(regex1a,'hi mom!'); // replace matching patterns
+
+// PASSWORD VALIDATION
+
+// example. let's break this down
+// password must contain a capital letter, lowercase letter, number, and min length of 8
+const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/g;
+console.log('asdf'.search(re)); // returns 0 if valid, -1 if invalid
+// ^                match the beginning of input
+// (?=.*\d)         positive lookahead. beginning of input only matches if starting with 
+//                      zero or more of any character (.*) followed by a digit (\d)
+// (?=.*[a-z])      positive lookahead. previous input only matches if starting with zero
+//                      or more of any character (.*) followed by any lowercase character ([a-z])
+// (?=.*[A-Z])      positive lookahead. previous input only matches if starting with zero
+//                      or more of any character (.*) followed by any uppercase character ([A-Z])
+// (?=.*[a-zA-Z])   positive lookahead. previous input only matches if starting with zero
+//                      or more of any character (.*) followed by any character ([a-zA-Z])
+// .{8,}            match 8 or more of any character (.)
+// $                match the end of input
+
+// /e/g 			=> matches all e in text
+// /e+/g 			=> matches 1 or more e in text
+// /ea?/g 			=> matches all e and a optionally
+// /ea*/g			=> match 0 or more (like combo of + and ?)
+// /.at/g			=> period matches anything. so “cat”, “ at”, etc
+// /\./g			=> backspace escapes the char that’s next
+// /\w/g			=> matches any character (\W is opposite)
+// /\s/g			=> matches all whitespace (\S is opposite)
+// /\w{4,5}/g 	    => {} gives min/max of preceding selector
+// /[fc]at/g		=> [] match any chars inside it (indiv, ranges)
+// /(t | T)he/g	    => () is its own group ( | is like or)
+// /^T/g 			=> ^ match the beginning of the line
+// /\.$/g			=> $ match the end of the line
+
+// ====================================================
+// basics of regex: practice
+// ====================================================
+
+// https://regexone.com 
