@@ -626,3 +626,313 @@ console.log('asdf'.search(re)); // returns 0 if valid, -1 if invalid
 // ====================================================
 
 // https://regexone.com 
+
+// ====================================================
+// how to encode and decode text (base64, url encoding)
+// ====================================================
+
+// when you pass information through a URL, the string must only use
+// specific allowed characters. any unallowed characters must be encoded
+// while en route and decoded when in use.
+
+// URL encoding replaces unallowed characters with a % sign followed by two 
+// hexadecimal digits (encodeURI and encodeURIComponent)
+
+// base64 strings only consist of ASCII characters, so they’re generally URL-safe
+// (btoa and atob)
+
+// base64 is used to transfer binary data
+// encodeURIComponent only encodes special characters
+
+// using encode URI:
+const testURI = ('https://www.google.com/spaces in file/');
+const testURIComponent = ('spaces in file');
+
+// to encode URI
+encodeURI(testURI); // returns https://www.google.com/spaces%20in%20file/
+
+// to encode URI component only
+encodeURIComponent(testURIComponent); // returns spaces%20in%20file
+
+// using base64:
+
+// to encode string
+const stringToBase64 = btoa(testURIComponent); 
+stringToBase64; // returns c3BhY2VzIGluIGZpbGU=
+
+// to decode string
+const base64ToString = atob(stringToBase64);
+base64ToString; // returns spaces in file
+
+// ====================================================
+// ES6 syntactic sugar: arrow functions
+// ====================================================
+
+// MDN has fantastic documentation on this
+
+// before arrow functions
+function asdf(a) {
+    return a * 10;
+}
+
+// after arrow functions
+a => a * 10;
+
+// ====================================================
+// ES6 syntactic sugar: destructuring assignments
+// ====================================================
+
+// MDN has fantastic documentation on this
+// so does Dmitri Pavlutin, check out his blog!
+
+// destructuring arrays and objects can be quite useful
+// extract properties from objects and bind them to variables
+
+// const [firstElement, secondElement] = list;
+// is equivalent to:
+// const firstElement = list[0];
+// const secondElement = list[1];
+
+// property to variable:
+// const { prop } = object;
+
+// multiple properties:
+// const { prop1, prop2, ..., propN } = object;
+
+// default value:
+// const { prop = 'Default' } = object;
+
+// alias:
+// const { prop: myProp } = object;
+
+// deep property:
+// const { prop: { deepProp } } = object;
+
+// dynamic property name:
+// const { [propName]: myProp } = object;
+
+// ====================================================
+// ES6 syntactic sugar: object initializer shorthand
+// ====================================================
+
+// shorthand property names
+// shorthand method names
+// computed property names
+
+// before object initializer shorthand:
+
+var cat = 'meow';
+
+var someOtherObj = {
+    cat: cat,
+    dog: function() {
+        //logic
+    },
+    bird: 'tweet'
+}
+
+// after object initializer shorthand:
+
+let one = 'apple';
+let three = 'lettuce';
+
+let someObj = {
+    one,
+    two() {
+        // logic
+    },
+    [three]: 'tweet'
+}
+
+// ====================================================
+// ES6 syntactic sugar: rest parameters
+// ====================================================
+
+// allows function to accept infinite num of args as an array
+// only last param in function definition can be rest parameter
+
+function funFunc(...args) {
+    return args.reduce((prev, curr) => {
+        return prev + curr;
+    })
+}
+
+funFunc(1,2,3); // returns 6
+funFunc(1,2,3,4,5,6) // returns 17
+
+// ====================================================
+// ES6 syntactic sugar: spread operator
+// ====================================================
+
+// only on arrays as of ES6 (ES9 introduces spread operator to objects)
+
+// allows a new way of concatenating arrays. allows for easy 
+// cloning of arrays. allows for combining/cloning objects.
+
+const odd = [1,3,5];
+const combined = [2,4,6, ...odd]; // returns [2,4,6,1,3,5]
+
+// ====================================================
+// ES6 syntactic sugar: rest parameter vs spread operator
+// ====================================================
+
+// spread operator unpacks elements
+// rest parameter packs elements into an array
+
+// ====================================================
+// prototypes: constructor functions, 'new' keyword, 
+// 'this' keyword
+// ====================================================
+
+// constructor function 
+function Person1(firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+}
+
+// ES5 introduced Object.create() method to create a new object
+
+// defining method in prototype object of Person1 constructor function
+Person1.prototype.getFullName1 = function() {
+    return this.firstName + ' ' + this.lastName;
+}
+
+// using new keyword to create new instance of object using prototype
+let p1 = new Person1('John', 'Doe');
+
+// using a Person1.prototype method on a Person1 object
+p1.getFullName1();
+
+// ====================================================
+// prototypes: above but with ES6 classes
+// ====================================================
+
+// other keywords include constructor, static, extends, and super
+
+class Person2 {
+    constructor(firstName, lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+    getFullName2() {
+        return this.firstName + ' ' + this.lastName;
+    }
+}
+
+let p2 = new Person2('Jane', 'Doe');
+
+p2.getFullName2();
+
+// ====================================================
+// prototypes: inheritance basics
+// ====================================================
+
+// MDN has fantastic documentation on this
+// so does javascript.info
+
+// sharing amid objects makes for easy inheritance of structure
+// (data fields), behavior (functions/methods), and state (data values)
+
+// simply put, prototypical inheritance refers to the ability to access
+// object properties from another object
+
+// In JavaScript, objects have a special hidden property [[Prototype]] 
+// (as named in the specification), that is either null or references 
+// another object. That object is called “a prototype”
+
+// the __proto__ method allows to set prototypes, though it's a bit outdated
+
+let animal = {
+    eats: true,
+    walk() {
+        console.log('Animal walks');
+    }
+}
+let rabbit = {
+    __proto__: animal,
+    walk() {
+        console.log('Rabbit! Hoppity hop!');
+    },
+    jumps: true
+}
+let longEar = {
+    __proto__: rabbit,
+    earLength: 10
+}
+
+// getter and setter
+
+// can use for(let prop in obj) loop to iterate over properties of objects
+// hasOwnProperty, Object.keys, Object.values
+
+// ====================================================
+// cookies
+// ====================================================
+
+// cookies are a plain text data record of 5 variable-length fields:
+// - expires (date cookie expires. if blank, once visitor quits browser)
+// - domain (domain name of site)
+// - path (path to directory/webpage that set cookie. blank if retrieve from any.)
+// - secure (if "secure", can only be retrieved with secure server)
+// - name=value ()
+
+// JavaScript can read, create, modify, and delete the cookies that apply to the current
+// web page
+
+// cookies best to use for authentication
+
+// to create a cookie, assign a string value to the document.cookie object
+
+// cookie values can't include semicolons, commas, or whitespace
+// best to use escape() function to encode value before storing in cooking
+// and use unescape() function to read cookie value
+
+function ReadCookie() {
+    let allCookies = document.cookie;
+    document.write('All Cookies: ' + allCookies);
+
+    // get all cookie pairs in an array
+    cookieArray = allCookies.split(';');
+
+    for(let i = 0; i < cookieArray.length; i++) {
+        let name = cookieArray[i].split('=')[0];
+        let value = cookieArray[i].split('=')[1];
+        document.write('Key is : ' + name + ' and Value is : ' + value);
+    }
+}
+
+ReadCookie();
+
+// ====================================================
+// web storage API: local storage & session storage
+// ====================================================
+
+// check out MDN's "Using the Web Storage API"
+// check out DigitalOcean's intro to local storage and session storage
+
+// session storage maintains a separate storage area for each given origin that's 
+// available for the duration of the page session (as long as the browser is open, 
+// including page reloads and restores.)
+
+// local storage like session storage, but persists even when the browser is closed and reopened.
+
+// can only store string values
+
+// great tools for saving key/value pairs locally
+
+// why a good alt to using cookies?
+// - data saved locally only and can't be read by the server, which eliminates the security
+//   issue that cookies present
+// - allows for much more data to be saved (10mb for most browsers)
+// - syntax is straightforward
+
+// to store objects or arrays as values, use JSON.stringify()
+// localStorage.setItem(key, JSON.stringify(myObj));
+// let item = JSON.parse(localStorage.getItem(key));
+
+let myLocalStorage = window.localStorage;
+let mySessionStorage = window.sessionStorage;
+
+// Storage.setItem(), Storage.getItem(), Storage.removeItem(), Storage.clear()
+
+// mySessionStorage.setItem(key,value);
