@@ -320,6 +320,98 @@ while (!bookStack.isEmpty()) {
 bookStack; // now returns [], an empty stack
 
 // ====================================================
+// simple data structures: linked lists
+// ====================================================
+
+// FCC has good article on this
+
+// similar to arrays, except elements are not stored in a particular memory 
+// location or index. Instead, each element is a separate object that contains
+// a pointer or a link to the next object in that list
+
+// each element/node contains two items: data stored, and link to next node
+
+// entry point to linked list = head
+// last node on list links to null
+// if list is empty, head is null reference
+
+// const linkedList = {
+//     head: {
+//         value: 3
+//         next: {
+//             value: 6
+//             next: {
+//                 value: 9
+//                 next: {
+//                     value: 12
+//                     next: null
+//                 }
+//             }
+//         }
+//     }
+// }
+
+// ADVANTAGE: 
+// nodes can easily be removed/added wo reoganizing entire data structure
+
+// DISADVANTAGES:
+// slow search operations, since random access of data elements not allowed
+// (sequentially)
+// uses more memory than arrays bc pointer storage (head/next)
+
+// TYPES OF LINKED LISTS
+// Singly Linked Lists: one pointer per node
+// Doubly Linked Lists: two pointers per node (next and previous)
+// Circular Linked Lists: last node points to first node or any other node
+// before it.
+
+// IMPLEMENTING LINKED LISTS
+class ListNode {
+    constructor(data) {
+        this.data = data
+        this.next = null
+    }
+}
+
+class LinkedList {
+    constructor(head = null) {
+        this.head = head
+    }
+
+    // useful helper functions
+    size() {
+        let count = 0
+        let node = this.head
+        while (node) {
+            count++
+            node = node.next
+        }
+        return count
+    }
+    clear() {
+        this.head = null
+    }
+    getLast() {
+        let lastNode = this.head
+        if (lastNode) {
+            while (lastNode.next) {
+                lastNode = lastNode.next
+            }
+        }
+        return lastNode
+    }
+    getFirst() {
+        return this.head
+    }
+}
+
+let node1 = new ListNode(2)
+let node2 = new ListNode(4)
+node1.next = node2 
+
+let list = new LinkedList(node1)
+
+// ====================================================
 // simple data structures: objects and sets
 // ====================================================
 
@@ -407,6 +499,25 @@ const myObj1 = {
 };
 
 Object.keys(myObj1); // returns ['name', 'age', 'employedAs']
+
+// ====================================================
+// data structures & algorithms: basics of big o
+// ====================================================
+
+// Describes complexity of code in algebraic terms
+
+// O(n!)
+// O(2^n)
+// O(n^2) = “big O squared”
+// O(n log(n))
+// O(n)
+// O(log n), O(1)
+
+// You want the last two, last three for fair
+
+// n is input size
+
+// Only look at dominant terms (the term that’ll overshadow the others, no coefficients)
 
 // ====================================================
 // using fetch API: promises
@@ -936,3 +1047,234 @@ let mySessionStorage = window.sessionStorage;
 // Storage.setItem(), Storage.getItem(), Storage.removeItem(), Storage.clear()
 
 // mySessionStorage.setItem(key,value);
+
+// ====================================================
+// fundamental sort algorithms: bubble sort implementation
+// ====================================================
+
+// GeeksforGeeks has a good article on this
+
+// compares two adjacent elements and swaps them if they are not in intended 
+// order
+
+// unoptimized, O(n^2) complexity all the time (no bueno)
+function bblSort1(arr) {
+    for (let i = 0; i < arr.length; i++) {
+
+        // last i elements are already in place
+        for (let j = 0; j < (arr.length - i - 1); j++) {
+
+            // checking if item at present iteration
+            // is greater than the next iteration
+            if (arr[j] > arr[j+1]) {
+
+                // if the condition is true then swap them
+                let temp = arr[j]
+                arr[j] = arr[j + 1]
+                arr[j + 1] = temp
+            }
+        }
+    }
+    console.log(arr);
+}
+
+// optimized, O(n^2) complexity at worse and O(n) complexity at best
+function bblSort2(arr) {
+    let len = arr.length 
+
+    let isSwapped = false 
+
+    for (let i = 0; i < len; i++) {
+        isSwapped = false;
+        for (let j = 0; j < len; j++) {
+            if (arr[j] > arr[j + 1]) {
+                let temp = arr[j]
+                arr[j] = arr[j + 1]
+                arr[j + 1] = temp 
+                isSwapped = true
+            }
+        }
+
+        // IF no two elements were swapped by inner loop, then break
+        if (!isSwapped) {
+            break
+        }
+    }
+    console.log(arr)
+}
+
+let arr1 = [2, 65, 7, 20, 1, 8, 60]
+bblSort1(arr1)
+bblSort2(arr1)
+
+// ====================================================
+// fundamental sort algorithms: heap sort implementation
+// ====================================================
+
+// an article by Cansin Guler in StackAbuse is good
+// this will take time to properly break down & understand
+// GeeksforGeeks YouTube video on Heap Sort breaks down how it works step-by-step
+
+// STEPS
+// 1. build a "heap" using given elements (start to end)
+// - binary tree, two children per parent, fill from left to right
+// 2. transform "heap" into "max heap" by sorting the elements in ascending order
+// - parent node always greater than or equal to child nodes
+// 3. swap root node with last node and delete last node from heap
+// - indicates an already properly sorted element
+// 4. repeat 2 and 3 until there are no more elements in heap
+// - indicates all elements properly sorted
+
+// Math.floor returns largest INTEGER less than or equal to given number
+
+class MaxHeap {
+    constructor() {
+        this.heap = []
+    }
+
+    // finding index of parent and children of given node
+    parentIndex(index) {
+        return Math.floor((index-1)/2)
+    }
+
+    leftChildIndex(index) {
+        return (2*index + 1)
+    }
+
+    rightChildIndex(index) {
+        return (2*index + 2)
+    }
+
+    // used a lot in following methods, so included here (DRY)
+    swap(a,b) {
+        let temp = this.heap[a]
+        this.heap[a] = this.heap[b]
+        this.heap[b] = temp
+    }
+
+    // swapping elements if given index is larger than parent (and moving to above level)
+    insert(item) {
+        this.heap.push(item) // adds item to end of array
+        let index = this.heap.length - 1 // last element of heap, the item inserted
+        let parent = this.parentIndex(index)
+        while (this.heap[parent] && this.heap[parent] < this.heap[index]) {
+            this.swap(parent, index)
+            index = this.parentIndex(index)
+            parent = this.parentIndex(index)
+        }
+    }
+
+    // removes largest element (first elem in array), adds last element in array to first
+    // creates pointers to two children for new first elem
+    delete() {
+        let item = this.heap.shift()
+        this.heap.unshift(this.heap.pop())
+        let index = 0
+        let leftChild = this.leftChildIndex(index)
+        let rightChild = this.rightChildIndex(index)
+        while (this.heap[leftChild] && this.heap[leftChild] > this.heap[index] || this.heap[rightChild] > this.heap[index]) {
+            let max = leftChild
+            if (this.heap[rightChild] && this.heap[rightChild] > this.heap[max]) {
+                max = rightChild
+            }
+            this.swap(max, index)
+            index = max
+            leftChild = this.leftChildIndex(max)
+            rightChild = this.rightChildIndex(max)
+        }
+        return item
+    }
+}
+
+function heapSort(arr) {
+    let sorted = []
+    let heap1 = new MaxHeap()
+
+    for (let i = 0; i < arr.length; i++) {
+        heap1.insert(arr[i])
+    }
+
+    for (let i = 0; i < arr.length; i++) {
+        sorted.push(heap1.delete())
+    }
+
+    return sorted
+}
+
+console.log(heapSort(arr1))
+
+// ====================================================
+// fundamental sort algorithms: quick sort implementation
+// ====================================================
+
+// Abhilash Kakumanu's article on StackAbuse is good
+
+function partition(arr, start, end) {
+    // taking last element as pivot
+    const pivotValue = arr[end]
+    let pivotIndex = start;
+    for (let i = start; i < end; i++) {
+        if (arr[i] < pivotValue) {
+            // swapping elements
+            [arr[i], arr[pivotIndex]] = [arr[pivotIndex], arr[i]]
+            // moving to next element
+            pivotIndex++
+        }
+    }
+
+    // putting pivor value in middle
+    [arr[pivotIndex], arr[end]] = [arr[end], arr[pivotIndex]]
+    return pivotIndex
+}
+
+// RESURSIVE IMPLEMENTATION OF QUICK SORT
+function quickSortRecursive(arr, start, end) {
+    // base case or terminating case
+    if (start >= end) {
+        return;
+    }
+
+    // returns pivotIndex
+    let index = partition(arr, start, end)
+
+    // recursively apply the same logic to the left
+    quickSort(arr, start, index - 1)
+    quickSort(arr, index + 1, end)
+}
+
+// ITERATIVE IMPLEMENTATION OF QUICK SORT
+// as with most recursive-to-iterative conversions, the first thing that 
+// should come to mind is using a stack to simulate recursive calls
+function quickSortIterative(arr) {
+    // creating an array that we'll use as a stack, using the push() and pop() functions
+    stack = []
+
+    // adding the entire initial array as an "unsorted subarray"
+    stack.push(0)
+    stack.push(arr.length - 1)
+
+    // there isn't an explicit peek() function
+    // the loop repeats as long as we have unsorted subarrays
+    while (stack[stack.length - 1] >= 0) {
+
+        // extractin the top unsorted subarray
+        end = stack.pop()
+        start = stack.pop()
+
+        pivotIndex = partition(arr, start, end)
+
+        // if there are unsorted elements to the "left" of the pivot,
+        // we add that subarray to the stack so we can sort it later
+        if (pivotIndex - 1 > start) {
+            stack.push(start)
+            stack.push(pivotIndex - 1)
+        }
+
+        // if there are unsorted elements to the "right" of the pivot,
+        // we add that subarray to the stack so we can sort it later
+        if (pivotIndex + 1 < end) {
+            stack.push(pivotIndex + 1)
+            stack.push(end)
+        }
+    }
+}
